@@ -84,7 +84,8 @@ body{font-family:system-ui,"PingFang SC",sans-serif;background:var(--bg);color:v
 
 <script>
 var S=[],A=[],lastResult=null,lastSys=null;
-var PAY={'30':'https://buy.stripe.com/8x2cN680Y8erfTz8wm1wY07','60':'https://buy.stripe.com/00wbJ20ywfGTazf9Aq1wY08','90':'https://buy.stripe.com/5kQ28s4OM52f0YF7si1wY09'};
+var PAY={'9.99':'https://buy.stripe.com/4gMaEY952fGTbDjfYO1wY0c','19.99':'https://buy.stripe.com/8x2cN680Y52ffTz6oe1wY0d','29.99':'https://buy.stripe.com/aFa3cw4OMdyLbDj4g61wY0e','39.99':'https://buy.stripe.com/fZubJ2epm2U78r76oe1wY0f','49.99':'https://buy.stripe.com/28EdRa0yw0LZgXDfYO1wY0g'};
+var TIERS=[{p:'9.99',label:'入门',aux:'3',extra:'核心计算+3辅助印证'},{p:'19.99',label:'标准',aux:'8',extra:'+8辅助+基础解读'},{p:'29.99',label:'进阶',aux:'15',extra:'+15辅助+矛盾分析+配对'},{p:'39.99',label:'深度',aux:'20',extra:'+20辅助+人生轨迹+职业'},{p:'49.99',label:'终极',aux:'25',extra:'+25辅助+全报告+PDF+MBTI'}];
 
 // MBTI
 var MBTI_Q=[{d:'EI',q:'你更倾向：',a:'独处时恢复能量',b:'与人相处时恢复能量'},{d:'EI',q:'聚会中你通常：',a:'听多说少',b:'说多听少'},{d:'SN',q:'你更关注：',a:'具体事实和细节',b:'整体模式和可能性'},{d:'SN',q:'学习新事物时：',a:'按步骤实操',b:'先理解理论'},{d:'TF',q:'做决定更依赖：',a:'逻辑和原则',b:'感受和价值观'},{d:'TF',q:'面对冲突你：',a:'客观分析对错',b:'优先维护关系'},{d:'JP',q:'你更喜欢：',a:'有计划有安排',b:'随性自由发挥'},{d:'JP',q:'面对截止日期：',a:'提前规划完成',b:'最后冲刺完成'}];
@@ -141,10 +142,7 @@ async function calc(i){
       '<div style="background:#0a0a0f;border:1px dashed var(--border);border-radius:8px;padding:14px;margin-top:10px"><strong style="color:var(--muted);font-size:.8em">🆓 免费预览 — '+d.systemName+'</strong>'+
       '<div class="result on" style="max-height:200px;margin-top:8px">'+preview+(t.length>700?'\n... (完整报告共'+t.length+'字符)':'')+'</div></div>'+
       '<div style="margin-top:14px"><strong style="font-size:.85em;color:var(--gold)">选择解读深度：</strong></div>'+
-      '<div class="tier-row">'+
-      '<div class="tier"><h4>🔮 标准</h4><div class="amt">$30</div><p style="font-size:.7em;color:var(--muted)">5种辅助体系印证</p><button class="btn-sm btn" onclick="window.open(\''+PAY['30']+'\',\'_blank\')">购买</button></div>'+
-      '<div class="tier"><h4>⭐ 深度</h4><div class="amt">$60</div><p style="font-size:.7em;color:var(--muted)">15种辅助+矛盾分析</p><button class="btn-sm btn btn2" onclick="window.open(\''+(PAY['60']||PAY['30'])+'\',\'_blank\')">购买</button></div>'+
-      '<div class="tier"><h4>👑 终极</h4><div class="amt">$90</div><p style="font-size:.7em;color:var(--muted)">25种辅助+人生轨迹+PDF</p><button class="btn-sm btn btn3" onclick="window.open(\''+(PAY['90']||PAY['30'])+'\',\'_blank\')">购买</button></div>'+
+      '<div class="tier-row" style="grid-template-columns:repeat(5,1fr)">'+TIERS.map(function(t){return '<div class="tier"><h4>'+t.label+'</h4><div class="amt">$'+t.p+'</div><p style="font-size:.6em;color:var(--muted)">'+t.extra+'</p><button class="btn-sm btn" onclick="window.open(\''+PAY[t.p]+'\',\'_blank\')">购买</button></div>';}).join('')+
       '</div><p style="font-size:.7em;color:var(--muted);text-align:center;margin-top:8px">交叉体系：'+auxNames+' 等</p>';
   }catch(e){document.getElementById('loading').className='loading';document.getElementById('resultArea').innerHTML='<div class="result on" style="color:#e05a5a">网络错误</div>'}
 }
