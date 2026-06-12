@@ -115,7 +115,9 @@ async function init(){
     var r=await fetch('/api/systems');var d=await r.json();S=d.core;A=d.auxiliary;
     var icons={bazi:'🪷',ziwei:'⭐',liuyao:'🪙',meihua:'🌸',qimen:'🗺️',daliuren:'🔮',taiyi:'🌌',tarot:'🃏',astrology:'✨',almanac:'📅',xiaoliuren:'✋'};
     document.getElementById('grid').innerHTML=S.map(function(s){
-      return '<div class="sys" onclick="openSys(\''+s.id+'\')"><div class="icon">'+(icons[s.id]||'🔮')+'</div><h3>'+s.name+'</h3><p>'+s.desc+'</p></div>';
+      var nm=SYS_I18N[s.id]?SYS_I18N[s.id][LOC]:s.name;
+      var ds=SYS_DESC[s.id]?SYS_DESC[s.id][LOC]:s.desc;
+      return '<div class="sys" onclick="openSys(\''+s.id+'\')"><div class="icon">'+(icons[s.id]||'🔮')+'</div><h3>'+nm+'</h3><p>'+ds+'</p></div>';
     }).join('');
     document.getElementById('auxGrid').innerHTML=A.map(function(a){return '<span class="aux-tag">'+a.name+'</span>';}).join('');
   }catch(e){}
@@ -128,11 +130,15 @@ function openSys(i){
   document.getElementById('resultArea').innerHTML='';
   document.getElementById('loading').className='loading';
   var h='<p style="color:var(--muted);margin-bottom:12px;font-size:.85em">'+s.desc+'</p>';
+  // Always add name + birth date/time
+  var nl={zh:'姓名',en:'Full Name',ja:'お名前'}[LOC]||'姓名';
+  h+='<div class="input-group"><label>'+nl+'</label><input id="inp_name" placeholder="'+nl+'"></div>';
+  h+='<div class="row2"><div class="input-group"><label>'+(LOC==='ja'?'生年月日':'出生日期')+'</label><input id="inp_birthDate" type="date"></div><div class="input-group"><label>'+(LOC==='ja'?'出生時間':'出生时间')+'</label><input id="inp_birthTime" type="time" value="12:00"></div></div>';
   s.inputs.forEach(function(k){
-    var lb={birthYear:'出生年',birthMonth:'出生月',birthDay:'出生日',birthHour:'出生时(0-23)',birthMinute:'出生分',longitude:'经度',latitude:'纬度',gender:'性别(male/female)',coins:'铜钱(6次,逗号分隔)',count:'牌数(1-10)',upperTrigram:'上卦(1-8)',lowerTrigram:'下卦(1-8)',year:'年',month:'月',day:'日',hour:'时'}[k]||k;
+    var lb=INPUT_LABELS[k]?INPUT_LABELS[k][LOC]:k;
     h+='<div class="input-group"><label>'+lb+'</label><input id="inp_'+k+'" placeholder="'+lb+'"></div>';
   });
-  h+='<button class="btn" onclick="calc(\''+i+'\')">开始占算</button>';
+  h+='<button class="btn" onclick="calc(\''+i+'\')">'+T('calc')+'</button>';
   document.getElementById('modalBody').innerHTML=h;
 }
 
