@@ -140,7 +140,9 @@ module.exports = async (req, res) => {
 
   // List all systems
   if (path === 'systems' || path === '') {
-    return res.json({
+    const full = (req.body && req.body.full === true);
+      if (!full) {
+        return res.json({
       core: Object.entries(SYSTEMS).map(([k, v]) => ({ id: k, name: v.name, desc: v.desc, inputs: v.inputs })),
       auxiliary: getAuxiliaryList(),
       total_auxiliary: getAuxiliaryList().length
@@ -181,7 +183,9 @@ module.exports = async (req, res) => {
       // Select relevant auxiliary systems for deep cross-referencing
       const auxRefs = selectAuxiliaryRefs(path);
 
-      return res.json({
+      const full = (req.body && req.body.full === true);
+      if (!full) {
+        return res.json({
         system: path,
         systemName: sys.name,
         result: json,

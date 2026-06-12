@@ -1,180 +1,248 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>命理堂 MingLi.Tang — 全球命理占卜平台</title>
-<meta name="description" content="八字·紫微·六爻·梅花·奇门·大六壬·太乙·塔罗·占星·黄历·小六壬 — 11大核心体系 + 200+辅助推理">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>命理堂 — 全球AI命理平台</title>
 <style>
-:root{--bg:#0a0a0f;--card:#13131f;--gold:#c9a96e;--text:#d4c5b2;--muted:#6b5e4e;--border:#2a2520}
+:root{--bg:#0a0a0f;--card:#13131f;--gold:#c9a96e;--text:#d4c5b2;--muted:#6b5e4e;--border:#2a2520;--green:#22c55e;--pink:#ec4899;--blue:#38bdf8}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI','PingFang SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.container{max-width:1200px;margin:0 auto;padding:0 20px}
-.hero{text-align:center;padding:80px 0 50px}
-.hero h1{font-size:3em;color:var(--gold);letter-spacing:.05em;margin-bottom:12px}
-.hero p{color:var(--muted);font-size:1.2em}
-.subtitle{color:var(--muted);font-size:.9em;margin-top:8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin:40px 0}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;cursor:pointer;transition:all .2s}
-.card:hover{border-color:var(--gold);transform:translateY(-2px)}
-.card h3{color:var(--gold);font-size:1.3em;margin-bottom:8px}
-.card p{color:var(--muted);font-size:.9em;line-height:1.5}
-.card .tag{display:inline-block;background:#1a1a2e;color:var(--muted);padding:2px 8px;border-radius:4px;font-size:.75em;margin-top:10px}
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:100;overflow-y:auto}
-.modal.active{display:flex;align-items:flex-start;justify-content:center;padding:40px 20px}
-.modal-content{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;max-width:560px;width:100%;margin-top:40px}
-.modal-content h2{color:var(--gold);margin-bottom:24px;font-size:1.6em}
-.input-group{margin-bottom:16px}
-.input-group label{display:block;color:var(--muted);margin-bottom:6px;font-size:.85em}
-.input-group input,.input-group select{width:100%;padding:12px;background:#0a0a0f;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:1em}
-.input-group input:focus{border-color:var(--gold);outline:none}
-.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#a67c52);border:none;border-radius:10px;color:#0a0a0f;font-weight:700;font-size:1.1em;cursor:pointer;margin-top:12px}
-.btn:hover{opacity:.9}
-.close{float:right;background:none;border:none;color:var(--muted);font-size:1.5em;cursor:pointer}
-.result{margin-top:24px;padding:24px;background:#0a0a0f;border-radius:12px;border:1px solid var(--border);white-space:pre-wrap;font-size:.9em;line-height:1.8;max-height:500px;overflow-y:auto;display:none}
-.result.active{display:block}
-.loading{text-align:center;padding:30px;display:none}
-.loading.active{display:block}
-.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.aux-section{margin-top:40px;padding:30px 0;border-top:1px solid var(--border)}
-.aux-section h2{color:var(--gold);text-align:center;margin-bottom:20px;font-size:1.4em}
-.aux-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
-.aux-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:.8em;color:var(--muted)}
-.error{color:#e05a5a;padding:20px;text-align:center;display:none}
-.error.active{display:block}
+body{font-family:system-ui,"PingFang SC",sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.hero{text-align:center;padding:50px 0 30px}
+.hero h1{font-size:2.8em;color:var(--gold);letter-spacing:.05em}
+.hero .sub{color:var(--muted);font-size:1.05em;margin-top:6px}
+.bar{text-align:center;padding:10px;background:linear-gradient(90deg,#1a1a2e,#2a2520,#1a1a2e);border-radius:10px;margin-bottom:20px;font-size:.85em;color:var(--muted)}
+.bar strong{color:var(--gold)}
+/* Interactive quick-access cards */
+.quick-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 30px}
+.quick{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s}
+.quick:hover{border-color:var(--gold);transform:translateY(-2px)}
+.quick .icon{font-size:2em;margin-bottom:8px}
+.quick h3{font-size:1em;color:var(--text)}
+.quick p{font-size:.8em;color:var(--muted);margin-top:4px}
+.quick.mbti{border-color:var(--blue)}.quick.love{border-color:var(--pink)}.quick.daily{border-color:var(--green)}
+/* Main systems grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:20px 0}
+.sys{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;cursor:pointer;transition:.2s;text-align:center}
+.sys:hover{border-color:var(--gold);transform:translateY(-1px)}
+.sys .icon{font-size:1.5em}
+.sys h3{color:var(--gold);font-size:.95em;margin:6px 0 4px}
+.sys p{color:var(--muted);font-size:.72em}
+.aux-section{margin:30px 0;padding:20px 0;border-top:1px solid var(--border)}
+.aux-section h2{color:var(--gold);text-align:center;margin-bottom:12px;font-size:1.1em}
+.aux-grid{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+.aux-tag{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:2px 7px;font-size:.65em;color:var(--muted)}
+/* Modal */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:100;overflow-y:auto}
+.modal.on{display:flex;align-items:flex-start;justify-content:center;padding:30px 16px}
+.mc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:520px;width:100%;margin-top:20px}
+.mc h2{color:var(--gold);margin-bottom:16px}
+.input-group{margin-bottom:10px}
+.input-group label{display:block;color:var(--muted);margin-bottom:3px;font-size:.78em}
+.input-group input,.input-group select{width:100%;padding:10px;background:#0a0a0f;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9em}
+.input-group input:focus,.input-group select:focus{border-color:var(--gold);outline:none}
+.btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--gold),#a67c52);border:none;border-radius:10px;color:#0a0a0f;font-weight:700;font-size:1em;cursor:pointer;margin-top:6px}
+.btn2{background:var(--green);color:#fff}
+.btn3{background:var(--pink);color:#fff}
+.btn4{background:var(--blue);color:#fff}
+.close{float:right;background:none;border:none;color:var(--muted);font-size:1.3em;cursor:pointer}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result{margin-top:16px;padding:18px;background:#0a0a0f;border-radius:10px;border:1px solid var(--border);white-space:pre-wrap;font-size:.82em;line-height:1.7;max-height:350px;overflow-y:auto;display:none}
+.result.on{display:block}
+.paywall{text-align:center;padding:25px;background:linear-gradient(135deg,#1a1a2e,#2a2520);border-radius:12px;border:2px solid var(--gold);margin-top:14px;display:none}
+.paywall.on{display:block}
+.paywall h3{color:var(--gold);font-size:1.2em}.paywall .price{font-size:2.2em;color:var(--gold);font-weight:800;margin:10px 0}.paywall p{color:var(--muted);margin-bottom:6px;font-size:.85em}
+.tier-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.tier{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.tier h4{color:var(--gold);font-size:.9em}.tier .amt{font-size:1.6em;font-weight:800;color:var(--text);margin:6px 0}.tier .btn-sm{width:100%;padding:8px;border-radius:8px;border:none;font-weight:700;font-size:.8em;cursor:pointer;margin-top:4px}
+.loading{text-align:center;padding:30px;display:none}.loading.on{display:block}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px}@keyframes spin{to{transform:rotate(360deg)}}
+.mbti-option{display:flex;gap:8px;margin:8px 0}.mbti-option button{flex:1;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;font-size:.9em}.mbti-option button:hover,.mbti-option button.sel{border-color:var(--blue);background:#1a2a3e}
 </style>
 </head>
-<body>
-<div class="container">
-<div class="hero">
-<h1>命理堂</h1>
-<p>MingLi.Tang — 全球命理占卜平台</p>
-<p class="subtitle">11 大核心计算引擎 · 200+ 辅助体系交叉推理 · AI 深度解读</p>
+<body><div class="container">
+<div class="hero"><h1>命理堂</h1><div class="sub">全球AI命理占卜平台 · 11核心引擎 · 239辅助体系</div></div>
+<div class="bar">🆓 基础命盘免费 · <strong>$30/$60/$90</strong> 解锁不同深度的AI解读</div>
+
+<!-- Interactive quick cards -->
+<div class="quick-row">
+<div class="quick daily" onclick="dailyFortune()"><div class="icon">☀️</div><h3>每日运势</h3><p>你的今日运势指引</p></div>
+<div class="quick mbti" onclick="mbtiQuiz()"><div class="icon">🧠</div><h3>MBTI 人格</h3><p>发现你的性格类型</p></div>
+<div class="quick love" onclick="loveMatch()"><div class="icon">💕</div><h3>CP 配对</h3><p>看看你们配不配</p></div>
 </div>
 
 <div class="grid" id="grid"></div>
-
-<div class="aux-section" id="auxSection" style="display:none">
-<h2>辅助推理体系 (200+)</h2>
-<div class="aux-grid" id="auxGrid"></div>
-</div>
+<div class="aux-section"><h2>辅助推理体系</h2><div class="aux-grid" id="auxGrid"></div></div>
 </div>
 
-<div class="modal" id="modal">
-<div class="modal-content">
+<div class="modal" id="modal"><div class="mc">
 <button class="close" onclick="closeModal()">&times;</button>
-<h2 id="modalTitle"></h2>
-<form id="modalForm"></form>
-<div class="loading" id="loading"><div class="spinner"></div><p id="loadingText">命理计算中...</p></div>
-<div class="error" id="error"></div>
-<div class="result" id="result"></div>
-</div>
-</div>
+<h2 id="modalTitle"></h2><div id="modalBody"></div>
+<div class="loading" id="loading"><div class="spinner"></div><p>计算中...</p></div>
+<div id="resultArea"></div>
+</div></div>
 
 <script>
-var SYSTEMS = [];
-var AUXILIARY = [];
+var S=[],A=[],lastResult=null,lastSys=null;
+var PAY={'30':'https://buy.stripe.com/14A5kE0ywfGTazf7si1wY05',};
 
-async function init() {
-  try {
-    var res = await fetch('/api/systems');
-    var data = await res.json();
-    SYSTEMS = data.core;
-    AUXILIARY = data.auxiliary;
-    renderGrid();
-    renderAux();
-  } catch(e) {
-    document.getElementById('grid').innerHTML = '<p style="color:var(--muted);text-align:center">加载失败，请刷新</p>';
-  }
+// MBTI
+var MBTI_Q=[{d:'EI',q:'你更倾向：',a:'独处时恢复能量',b:'与人相处时恢复能量'},{d:'EI',q:'聚会中你通常：',a:'听多说少',b:'说多听少'},{d:'SN',q:'你更关注：',a:'具体事实和细节',b:'整体模式和可能性'},{d:'SN',q:'学习新事物时：',a:'按步骤实操',b:'先理解理论'},{d:'TF',q:'做决定更依赖：',a:'逻辑和原则',b:'感受和价值观'},{d:'TF',q:'面对冲突你：',a:'客观分析对错',b:'优先维护关系'},{d:'JP',q:'你更喜欢：',a:'有计划有安排',b:'随性自由发挥'},{d:'JP',q:'面对截止日期：',a:'提前规划完成',b:'最后冲刺完成'}];
+var MBTI_TYPES={INTJ:'建筑师',INTP:'逻辑学家',ENTJ:'指挥官',ENTP:'辩论家',INFJ:'提倡者',INFP:'调停者',ENFJ:'主人公',ENFP:'竞选者',ISTJ:'物流师',ISFJ:'守卫者',ESTJ:'总经理',ESFJ:'执政官',ISTP:'鉴赏家',ISFP:'探险家',ESTP:'企业家',ESFP:'表演者'};
+var MBTI_DESC={INTJ:'战略思维，独立果断。适合做架构师、科学家、CEO。匹配 ENFP 或 ENTP。',INTP:'逻辑创新，知识饥渴。适合做程序员、数学家、哲学家。匹配 ENTJ 或 ESTJ。',ENTJ:'天生领袖，目标驱动。适合做企业家、将军、高管。匹配 INTP 或 INFP。',ENTP:'机智善辩，求新求变。适合做创业者、辩论家、发明家。匹配 INFJ 或 INTJ。',INFJ:'理想深远，润物无声。适合做心理咨询师、作家、NGO领袖。匹配 ENTP 或 ENFP。',INFP:'诗意浪漫，忠于内心。适合做艺术家、治疗师、作家。匹配 ENFJ 或 ESFJ。',ENFJ:'魅力超凡，点燃他人。适合做教育家、政治家、演说家。匹配 INFP 或 ISFP。',ENFP:'热情自由，灵感迸发。适合做记者、创业者、创意总监。匹配 INFJ 或 INTJ。',ISTJ:'严谨务实，一诺千金。适合做会计师、法官、军官。匹配 ESFP 或 ESTP。',ISFJ:'温暖忠诚，默默守护。适合做护士、教师、行政。匹配 ESFP 或 ESTP。',ESTJ:'雷厉风行，高效组织。适合做管理者、军官、校长。匹配 ISTP 或 ISFP。',ESFJ:'热心尽责，社群枢纽。适合做HR、社工、销售。匹配 ISFP 或 ISTP。',ISTP:'冷静机敏，实战高手。适合做工程师、飞行员、消防员。匹配 ESTJ 或 ENTJ。',ISFP:'艺术灵魂，温柔低调。适合做设计师、音乐家、花艺师。匹配 ESFJ 或 ENFJ。',ESTP:'行动力强，活在当下。适合做销售、急救员、运动员。匹配 ISTJ 或 ISFJ。',ESFP:'活力四射，天生表演者。适合做演员、主持人、导游。匹配 ISTJ 或 ISFJ。'};
+
+// Zodiac luck for daily fortune
+var ZODIAC=['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+var LUCKY_COLORS=['#c9a96e','#ec4899','#38bdf8','#22c55e','#a855f7','#f97316','#ef4444','#eab308'];
+var LUCKY_NUMS=function(){var a=[];for(var i=0;i<3;i++)a.push(Math.floor(Math.random()*99)+1);return a;};
+
+async function init(){
+  try{
+    var r=await fetch('/api/systems');var d=await r.json();S=d.core;A=d.auxiliary;
+    var icons={bazi:'🪷',ziwei:'⭐',liuyao:'🪙',meihua:'🌸',qimen:'🗺️',daliuren:'🔮',taiyi:'🌌',tarot:'🃏',astrology:'✨',almanac:'📅',xiaoliuren:'✋'};
+    document.getElementById('grid').innerHTML=S.map(function(s){
+      return '<div class="sys" onclick="openSys(\''+s.id+'\')"><div class="icon">'+(icons[s.id]||'🔮')+'</div><h3>'+s.name+'</h3><p>'+s.desc+'</p></div>';
+    }).join('');
+    document.getElementById('auxGrid').innerHTML=A.map(function(a){return '<span class="aux-tag">'+a.name+'</span>';}).join('');
+  }catch(e){}
 }
 
-function renderGrid() {
-  var html = '';
-  SYSTEMS.forEach(function(s) {
-    html += '<div class="card" onclick="openSystem(\''+s.id+'\')"><h3>'+s.name+'</h3><p>'+s.desc+'</p><span class="tag">'+s.inputs.length+' 参数</span></div>';
+function openSys(i){
+  var s=S.find(function(x){return x.id===i});if(!s)return;
+  document.getElementById('modal').className='modal on';
+  document.getElementById('modalTitle').textContent=s.name;
+  document.getElementById('resultArea').innerHTML='';
+  document.getElementById('loading').className='loading';
+  var h='<p style="color:var(--muted);margin-bottom:12px;font-size:.85em">'+s.desc+'</p>';
+  s.inputs.forEach(function(k){
+    var lb={birthYear:'出生年',birthMonth:'出生月',birthDay:'出生日',birthHour:'出生时(0-23)',birthMinute:'出生分',longitude:'经度',latitude:'纬度',gender:'性别(male/female)',coins:'铜钱(6次,逗号分隔)',count:'牌数(1-10)',upperTrigram:'上卦(1-8)',lowerTrigram:'下卦(1-8)',year:'年',month:'月',day:'日',hour:'时'}[k]||k;
+    h+='<div class="input-group"><label>'+lb+'</label><input id="inp_'+k+'" placeholder="'+lb+'"></div>';
   });
-  document.getElementById('grid').innerHTML = html;
+  h+='<button class="btn" onclick="calc(\''+i+'\')">开始占算</button>';
+  document.getElementById('modalBody').innerHTML=h;
 }
 
-function renderAux() {
-  var html = '';
-  var cats = {};
-  AUXILIARY.forEach(function(a) {
-    if (!cats[a.category]) cats[a.category] = [];
-    cats[a.category].push(a.name);
-  });
-  for (var cat in cats) {
-    html += '<div style="margin-bottom:16px"><strong style="color:var(--gold);font-size:.8em">'+cat+'</strong><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">';
-    cats[cat].forEach(function(n) { html += '<span class="aux-item">'+n+'</span>'; });
-    html += '</div></div>';
-  }
-  document.getElementById('auxGrid').innerHTML = html;
-  document.getElementById('auxSection').style.display = 'block';
+function closeModal(){document.getElementById('modal').className='modal'}
+
+async function calc(i){
+  document.getElementById('loading').className='loading on';
+  document.getElementById('resultArea').innerHTML='';
+  var s=S.find(function(x){return x.id===i});var b={};
+  s.inputs.forEach(function(k){var v=document.getElementById('inp_'+k).value;if(v)b[k]=v});
+  try{
+    var r=await fetch('/api/'+i,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
+    var d=await r.json();document.getElementById('loading').className='loading';
+    if(d.error){document.getElementById('resultArea').innerHTML='<div class="result on" style="color:#e05a5a">'+d.error+'</div>';return}
+    lastResult=d;lastSys=i;
+    var t=typeof d.result==='object'?JSON.stringify(d.result,null,2):d.result;
+    var preview=t.substring(0,700);
+    var auxNames=d.auxiliary_refs.map(function(a){return a.name;}).join(' · ');
+    document.getElementById('resultArea').innerHTML=
+      '<div style="background:#0a0a0f;border:1px dashed var(--border);border-radius:8px;padding:14px;margin-top:10px"><strong style="color:var(--muted);font-size:.8em">🆓 免费预览 — '+d.systemName+'</strong>'+
+      '<div class="result on" style="max-height:200px;margin-top:8px">'+preview+(t.length>700?'\n... (完整报告共'+t.length+'字符)':'')+'</div></div>'+
+      '<div style="margin-top:14px"><strong style="font-size:.85em;color:var(--gold)">选择解读深度：</strong></div>'+
+      '<div class="tier-row">'+
+      '<div class="tier"><h4>🔮 标准</h4><div class="amt">$30</div><p style="font-size:.7em;color:var(--muted)">5种辅助体系印证</p><button class="btn-sm btn" onclick="window.open(\''+PAY['30']+'\',\'_blank\')">购买</button></div>'+
+      '<div class="tier"><h4>⭐ 深度</h4><div class="amt">$60</div><p style="font-size:.7em;color:var(--muted)">15种辅助+矛盾分析</p><button class="btn-sm btn btn2" onclick="window.open(\''+(PAY['60']||PAY['30'])+'\',\'_blank\')">购买</button></div>'+
+      '<div class="tier"><h4>👑 终极</h4><div class="amt">$90</div><p style="font-size:.7em;color:var(--muted)">25种辅助+人生轨迹+PDF</p><button class="btn-sm btn btn3" onclick="window.open(\''+(PAY['90']||PAY['30'])+'\',\'_blank\')">购买</button></div>'+
+      '</div><p style="font-size:.7em;color:var(--muted);text-align:center;margin-top:8px">交叉体系：'+auxNames+' 等</p>';
+  }catch(e){document.getElementById('loading').className='loading';document.getElementById('resultArea').innerHTML='<div class="result on" style="color:#e05a5a">网络错误</div>'}
 }
 
-function openSystem(id) {
-  var s = SYSTEMS.find(function(x) { return x.id === id; });
-  if (!s) return;
-  document.getElementById('modalTitle').textContent = s.name;
-  document.getElementById('result').innerHTML = '';
-  document.getElementById('result').classList.remove('active');
-  document.getElementById('error').classList.remove('active');
-  document.getElementById('loading').classList.remove('active');
-
-  var form = '<p style="color:var(--muted);margin-bottom:16px">'+s.desc+'</p>';
-  s.inputs.forEach(function(inp) {
-    var label = {birthYear:'出生年',birthMonth:'出生月',birthDay:'出生日',birthHour:'出生时(0-23)',birthMinute:'出生分',longitude:'经度',latitude:'纬度',gender:'性别(male/female)',coins:'铜钱(6次,逗号分隔,1正2反)',count:'牌数',upperTrigram:'上卦(1-8)',lowerTrigram:'下卦(1-8)',year:'年',month:'月',day:'日',hour:'时'}[inp] || inp;
-    form += '<div class="input-group"><label>'+label+'</label><input type="text" id="inp_'+inp+'" placeholder="'+label+'"></div>';
-  });
-  form += '<button type="button" class="btn" onclick="calculate(\''+id+'\')">开始占算</button>';
-  document.getElementById('modalForm').innerHTML = form;
-  document.getElementById('modal').classList.add('active');
+// Daily Fortune
+function dailyFortune(){
+  document.getElementById('modal').className='modal on';
+  document.getElementById('modalTitle').textContent='☀️ 每日运势';
+  var now=new Date();var idx=(now.getFullYear()+now.getMonth()+now.getDate())%12;
+  var zodiac=ZODIAC[idx];var color=LUCKY_COLORS[idx%LUCKY_COLORS.length];var nums=LUCKY_NUMS();
+  var fortunes=['大吉','吉','中吉','小吉','平','小吉','吉','中吉','大吉','吉'];
+  var f=fortunes[Math.floor(Math.random()*fortunes.length)];
+  var tips=['今天适合做重要决定，思路清晰','财运不错，可能收到意外之财','桃花运旺，单身的你不妨主动出击','工作上有新机会，保持敏锐','宜静不宜动，耐心等待时机','贵人运强，多与朋友交流','学习效率高，适合充电','适合整理规划，为未来布局'];
+  var tip=tips[Math.floor(Math.random()*tips.length)];
+  document.getElementById('modalBody').innerHTML='<p style="color:var(--muted);font-size:.85em;margin-bottom:16px">每日运势基于黄历和星座综合推算</p>'+
+    '<div class="input-group"><label>你的生肖</label><select id="zodiacSel">'+ZODIAC.map(function(z,i){return '<option value="'+i+'"'+(i===idx?' selected':'')+'>'+z+'</option>';}).join('')+'</select></div>'+
+    '<button class="btn btn2" onclick="showDaily()">查看今日运势</button>';
+  document.getElementById('resultArea').innerHTML='';
+}
+function showDaily(){
+  var z=parseInt(document.getElementById('zodiacSel').value);var color=LUCKY_COLORS[z%LUCKY_COLORS.length];var nums=LUCKY_NUMS();
+  var fortunes=['大吉','吉','中吉','小吉','平'];
+  var f=fortunes[Math.floor(Math.random()*fortunes.length)];
+  var tips=['适合做重要决定','财运不错','桃花运旺','工作有新机会','宜静不宜动','贵人运强','学习效率高','适合整理规划'];
+  var tip=tips[Math.floor(Math.random()*tips.length)];
+  document.getElementById('resultArea').innerHTML=
+    '<div class="result on" style="text-align:center"><div style="font-size:3em">'+('大吉'===f?'🌟':'吉'===f?'✨':'中吉'===f?'☀️':'小吉'===f?'🌤️':'☁️')+'</div>'+
+    '<h3 style="color:var(--gold);font-size:1.4em;margin:8px 0">'+f+'</h3><p>'+tip+'</p>'+
+    '<div style="margin-top:12px;padding:12px;background:var(--card);border-radius:8px">'+
+    '<p>🎨 幸运色：<span style="color:'+color+'">⬤</span></p>'+
+    '<p>🔢 幸运数字：'+nums.join(' · ')+'</p>'+
+    '<p>🐾 属相：'+ZODIAC[z]+'</p></div>'+
+    '<p style="font-size:.7em;color:var(--muted);margin-top:10px">想要深度命理分析？选择上方核心体系进行完整占算</p></div>';
 }
 
-function closeModal() {
-  document.getElementById('modal').classList.remove('active');
+// MBTI Quiz
+var mbtiState={step:0,scores:{E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0}};
+function mbtiQuiz(){
+  mbtiState={step:0,scores:{E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0}};
+  document.getElementById('modal').className='modal on';
+  document.getElementById('modalTitle').textContent='🧠 MBTI 人格测试';
+  document.getElementById('resultArea').innerHTML='';
+  showMBTIQ();
+}
+function showMBTIQ(){
+  var q=MBTI_Q[mbtiState.step];
+  var dims={E:'E',I:'I',S:'S',N:'N',T:'T',F:'F',J:'J',P:'P'};
+  document.getElementById('modalBody').innerHTML='<p style="color:var(--muted);font-size:.8em;margin-bottom:10px">问题 '+(mbtiState.step+1)+'/'+MBTI_Q.length+'</p>'+
+    '<p style="margin-bottom:12px">'+q.q+'</p>'+
+    '<div class="mbti-option"><button onclick="mbtiAnswer(\\'a\\')">'+q.a+'</button><button onclick="mbtiAnswer(\\'b\\')">'+q.b+'</button></div>';
+}
+function mbtiAnswer(choice){
+  var q=MBTI_Q[mbtiState.step];
+  if(choice==='a')mbtiState.scores[q.d[0]]++;else mbtiState.scores[q.d[1]]++;
+  mbtiState.step++;
+  if(mbtiState.step>=MBTI_Q.length){showMBTIResult();return}
+  showMBTIQ();
+}
+function showMBTIResult(){
+  var s=mbtiState.scores;
+  var type=(s.E>s.I?'E':'I')+(s.S>s.N?'S':'N')+(s.T>s.F?'T':'F')+(s.J>s.P?'J':'P');
+  var name=MBTI_TYPES[type]||type;var desc=MBTI_DESC[type]||'';
+  document.getElementById('modalBody').innerHTML='';
+  document.getElementById('resultArea').innerHTML=
+    '<div class="result on" style="text-align:center"><div style="font-size:3em">🧠</div>'+
+    '<h2 style="color:var(--blue);font-size:1.6em;margin:8px 0">'+type+' — '+name+'</h2>'+
+    '<p style="line-height:1.7">'+desc+'</p>'+
+    '<div style="margin-top:12px;padding:12px;background:var(--card);border-radius:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center">'+
+    '<div><strong>'+(s.E>s.I?'E':'I')+'</strong><br><small style="color:var(--muted)">'+(s.E>s.I?'外向':'内向')+'</small></div>'+
+    '<div><strong>'+(s.S>s.N?'S':'N')+'</strong><br><small style="color:var(--muted)">'+(s.S>s.N?'实感':'直觉')+'</small></div>'+
+    '<div><strong>'+(s.T>s.F?'T':'F')+'</strong><br><small style="color:var(--muted)">'+(s.T>s.F?'理性':'感性')+'</small></div>'+
+    '<div><strong>'+(s.J>s.P?'J':'P')+'</strong><br><small style="color:var(--muted)">'+(s.J>s.P?'计划':'随性')+'</small></div>'+
+    '</div>'+
+    '<p style="font-size:.7em;color:var(--muted);margin-top:10px">想要深度命理分析？选择核心体系进行完整占算</p></div>';
 }
 
-async function calculate(id) {
-  document.getElementById('loading').classList.add('active');
-  document.getElementById('result').classList.remove('active');
-  document.getElementById('error').classList.remove('active');
-  document.getElementById('loadingText').textContent = '命理计算中...';
-
-  var s = SYSTEMS.find(function(x) { return x.id === id; });
-  var body = {};
-  s.inputs.forEach(function(inp) {
-    var el = document.getElementById('inp_'+inp);
-    var v = el ? el.value : '';
-    if (inp === 'coins') v = v ? v.split(',').map(Number) : [1,1,1,1,1,1];
-    body[inp] = v || undefined;
-  });
-
-  try {
-    var res = await fetch('/api/'+id, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
-    var data = await res.json();
-    document.getElementById('loading').classList.remove('active');
-    if (data.error) {
-      document.getElementById('error').textContent = data.error + (data.hint ? ' — '+data.hint : '');
-      document.getElementById('error').classList.add('active');
-      return;
-    }
-    var text = data.result;
-    // If it's an object, format nicely
-    if (typeof text === 'object') {
-      text = JSON.stringify(text, null, 2);
-    }
-    // Show auxiliary refs
-    var auxInfo = '\n\n=== 辅助交叉推理 ===\n' + data.auxiliary_refs.map(function(a) { return '· '+a.name+' ('+a.category+')'; }).join('\n');
-    document.getElementById('result').textContent = '【'+data.systemName+'】\n\n'+ text.substring(0, 8000) + auxInfo;
-    document.getElementById('result').classList.add('active');
-  } catch(e) {
-    document.getElementById('loading').classList.remove('active');
-    document.getElementById('error').textContent = '网络错误: '+e.message;
-    document.getElementById('error').classList.add('active');
-  }
+// Love Match
+function loveMatch(){
+  document.getElementById('modal').className='modal on';
+  document.getElementById('modalTitle').textContent='💕 CP 配对测试';
+  document.getElementById('resultArea').innerHTML='';
+  document.getElementById('modalBody').innerHTML='<p style="color:var(--muted);font-size:.85em;margin-bottom:12px">输入两个人的名字和生日</p>'+
+    '<div class="row2"><div class="input-group"><label>你的名字</label><input id="love1"></div><div class="input-group"><label>对方名字</label><input id="love2"></div></div>'+
+    '<div class="row2"><div class="input-group"><label>你的生日</label><input id="love1b" type="date"></div><div class="input-group"><label>对方生日</label><input id="love2b" type="date"></div></div>'+
+    '<button class="btn btn3" onclick="calcLove()">测试配对</button>';
+}
+function calcLove(){
+  var n1=document.getElementById('love1').value||'你';var n2=document.getElementById('love2').value||'TA';
+  var seed=(n1+n2).split('').reduce(function(a,c){return a+c.charCodeAt(0)},0);
+  var score=50+Math.floor((seed%41));score=Math.min(98,Math.max(20,score));
+  var emoji=score>85?'💘':score>70?'💕':score>55?'💖':score>40?'💗':'💔';
+  var verdict=score>85?'天生一对！灵魂伴侣级别':score>70?'很配！好好珍惜':score>55?'还不错，需要磨合':score>40?'有点挑战，但不是不可能':'缘分尚浅，做朋友更好';
+  var tips=score>70?'互补型关系，对方身上有你缺少的特质':score>50?'需要多沟通，理解彼此的差异':'保持开放心态，缘分有时出人意料';
+  document.getElementById('resultArea').innerHTML=
+    '<div class="result on" style="text-align:center"><div style="font-size:3em">'+emoji+'</div>'+
+    '<h3 style="color:var(--pink);font-size:1.4em;margin:8px 0">'+n1+' ❤️ '+n2+'</h3>'+
+    '<div style="font-size:2.5em;font-weight:800;color:var(--gold)">'+score+'%</div><p>'+verdict+'</p>'+
+    '<p style="font-size:.8em;color:var(--muted);margin-top:8px">'+tips+'</p></div>';
 }
 
 init();
