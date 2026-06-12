@@ -211,7 +211,7 @@ function showMBTIQ(){
   var dims={E:'E',I:'I',S:'S',N:'N',T:'T',F:'F',J:'J',P:'P'};
   document.getElementById('modalBody').innerHTML='<p style="color:var(--muted);font-size:.8em;margin-bottom:10px">问题 '+(mbtiState.step+1)+'/'+MBTI_Q.length+'</p>'+
     '<p style="margin-bottom:12px">'+q.q+'</p>'+
-    '<div class="mbti-option"><button onclick="mbtiAnswer(\\'a\\')">'+q.a+'</button><button onclick="mbtiAnswer(\\'b\\')">'+q.b+'</button></div>';
+    '<div class="mbti-option"><button onclick="mbtiAnswer(' + "'a'" + ')">'+q.a+'</button><button onclick="mbtiAnswer(' + "'b'" + ')">'+q.b+'</button></div>';
 }
 function mbtiAnswer(choice){
   var q=MBTI_Q[mbtiState.step];
