@@ -4,29 +4,29 @@ let t;
 const loadEngine = async () => { if (!t) t = await import('taibu-core'); return t; };
 
 const SYSTEMS = {
-  bazi: { name: '八字命理', calc: t.calculateBazi, toJson: t.toBaziJson, toText: t.toBaziText,
+  bazi: { name: '八字命理', fn: ['calculateBazi','toBaziJson','toBaziText'],
     inputs: ['birthYear','birthMonth','birthDay','birthHour'], desc: '四柱八字推命，看一生运程' },
-  ziwei: { name: '紫微斗数', calc: t.calculateZiwei, toJson: t.toZiweiJson, toText: t.toZiweiText,
+  ziwei: { name: '紫微斗数', fn: ['calculateZiwei','toZiweiJson','toZiweiText'],
     inputs: ['birthYear','birthMonth','birthDay','birthHour','birthMinute','longitude','latitude','gender'],
     desc: '十二宫命盘，十四主星定格局' },
-  liuyao: { name: '六爻占卜', calc: t.calculateLiuyao, toJson: t.toLiuyaoJson, toText: t.toLiuyaoText,
+  liuyao: { name: '六爻占卜', fn: ['calculateLiuyao','toLiuyaoJson','toLiuyaoText'],
     inputs: ['coins'], desc: '铜钱摇卦，问一事吉凶' },
-  meihua: { name: '梅花易数', calc: t.calculateMeihua, toJson: t.toMeihuaJson, toText: t.toMeihuaText,
+  meihua: { name: '梅花易数', fn: ['calculateMeihua','toMeihuaJson','toMeihuaText'],
     inputs: ['upperTrigram','lowerTrigram'], desc: '随手起卦，快速断事' },
-  qimen: { name: '奇门遁甲', calc: t.calculateQimen, toJson: t.toQimenJson, toText: t.toQimenText,
+  qimen: { name: '奇门遁甲', fn: ['calculateQimen','toQimenJson','toQimenText'],
     inputs: ['birthYear','birthMonth','birthDay','birthHour'], desc: '帝王之学，方位时机决策' },
-  daliuren: { name: '大六壬', calc: t.calculateDaliuren, toJson: t.toDaliurenJson, toText: t.toDaliurenText,
+  daliuren: { name: '大六壬', fn: ['calculateDaliuren','toDaliurenJson','toDaliurenText'],
     inputs: ['birthYear','birthMonth','birthDay','birthHour'], desc: '人事之王，看一事全部细节' },
-  taiyi: { name: '太乙神数', calc: t.calculateTaiyi, toJson: t.toTaiyiJson, toText: t.toTaiyiText,
+  taiyi: { name: '太乙神数', fn: ['calculateTaiyi','toTaiyiJson','toTaiyiText'],
     inputs: ['birthYear'], desc: '天人之学，看大运大势' },
-  tarot: { name: '塔罗占卜', calc: t.calculateTarot, toJson: t.toTarotJson, toText: t.toTarotText,
+  tarot: { name: '塔罗占卜', fn: ['calculateTarot','toTarotJson','toTarotText'],
     inputs: ['count'], desc: '78张牌阵，揭示潜意识的答案' },
-  astrology: { name: '占星命盘', calc: t.calculateAstrology, toJson: t.toAstrologyJson, toText: t.toAstrologyText,
+  astrology: { name: '占星命盘', fn: ['calculateAstrology','toAstrologyJson','toAstrologyText'],
     inputs: ['birthYear','birthMonth','birthDay','birthHour','birthMinute','longitude','latitude'],
     desc: '本命星盘+行运，看人生全景' },
-  almanac: { name: '黄历通书', calc: t.calculateDailyAlmanac, toJson: t.toAlmanacJson, toText: t.toAlmanacText,
+  almanac: { name: '黄历通书', fn: ['calculateDailyAlmanac','toAlmanacJson','toAlmanacText'],
     inputs: ['year','month','day'], desc: '择吉避凶，每日宜忌' },
-  xiaoliuren: { name: '小六壬', calc: t.calculateXiaoliurenData, toJson: t.toXiaoliurenJson, toText: t.toXiaoliurenText,
+  xiaoliuren: { name: '小六壬', fn: ['calculateXiaoliurenData','toXiaoliurenJson','toXiaoliurenText'],
     inputs: ['month','day','hour'], desc: '掌中掐算，即时断事' },
 };
 
@@ -116,8 +116,9 @@ module.exports = async (req, res) => {
         lowerTrigram: input.lowerTrigram || 1,
       };
 
-      const result = sys.calc(params);
-      const json = sys.toJson(result);
+      const [calcFn, toJsonFn] = sys.fn;
+      const result = t[calcFn](params);
+      const json = t[toJsonFn](result);
 
       // Pick 3 random auxiliary systems for cross-reference
       const allAux = getAuxiliaryList();
