@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>命理堂 MingLi.Tang — 全球命理占卜平台</title>
+<meta name="description" content="八字·紫微·六爻·梅花·奇门·大六壬·太乙·塔罗·占星·黄历·小六壬 — 11大核心体系 + 200+辅助推理">
+<style>
+:root{--bg:#0a0a0f;--card:#13131f;--gold:#c9a96e;--text:#d4c5b2;--muted:#6b5e4e;--border:#2a2520}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','PingFang SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+.hero{text-align:center;padding:80px 0 50px}
+.hero h1{font-size:3em;color:var(--gold);letter-spacing:.05em;margin-bottom:12px}
+.hero p{color:var(--muted);font-size:1.2em}
+.subtitle{color:var(--muted);font-size:.9em;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin:40px 0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;cursor:pointer;transition:all .2s}
+.card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.card h3{color:var(--gold);font-size:1.3em;margin-bottom:8px}
+.card p{color:var(--muted);font-size:.9em;line-height:1.5}
+.card .tag{display:inline-block;background:#1a1a2e;color:var(--muted);padding:2px 8px;border-radius:4px;font-size:.75em;margin-top:10px}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:100;overflow-y:auto}
+.modal.active{display:flex;align-items:flex-start;justify-content:center;padding:40px 20px}
+.modal-content{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;max-width:560px;width:100%;margin-top:40px}
+.modal-content h2{color:var(--gold);margin-bottom:24px;font-size:1.6em}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;color:var(--muted);margin-bottom:6px;font-size:.85em}
+.input-group input,.input-group select{width:100%;padding:12px;background:#0a0a0f;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:1em}
+.input-group input:focus{border-color:var(--gold);outline:none}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#a67c52);border:none;border-radius:10px;color:#0a0a0f;font-weight:700;font-size:1.1em;cursor:pointer;margin-top:12px}
+.btn:hover{opacity:.9}
+.close{float:right;background:none;border:none;color:var(--muted);font-size:1.5em;cursor:pointer}
+.result{margin-top:24px;padding:24px;background:#0a0a0f;border-radius:12px;border:1px solid var(--border);white-space:pre-wrap;font-size:.9em;line-height:1.8;max-height:500px;overflow-y:auto;display:none}
+.result.active{display:block}
+.loading{text-align:center;padding:30px;display:none}
+.loading.active{display:block}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.aux-section{margin-top:40px;padding:30px 0;border-top:1px solid var(--border)}
+.aux-section h2{color:var(--gold);text-align:center;margin-bottom:20px;font-size:1.4em}
+.aux-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.aux-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:.8em;color:var(--muted)}
+.error{color:#e05a5a;padding:20px;text-align:center;display:none}
+.error.active{display:block}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="hero">
+<h1>命理堂</h1>
+<p>MingLi.Tang — 全球命理占卜平台</p>
+<p class="subtitle">11 大核心计算引擎 · 200+ 辅助体系交叉推理 · AI 深度解读</p>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="aux-section" id="auxSection" style="display:none">
+<h2>辅助推理体系 (200+)</h2>
+<div class="aux-grid" id="auxGrid"></div>
+</div>
+</div>
+
+<div class="modal" id="modal">
+<div class="modal-content">
+<button class="close" onclick="closeModal()">&times;</button>
+<h2 id="modalTitle"></h2>
+<form id="modalForm"></form>
+<div class="loading" id="loading"><div class="spinner"></div><p id="loadingText">命理计算中...</p></div>
+<div class="error" id="error"></div>
+<div class="result" id="result"></div>
+</div>
+</div>
+
+<script>
+var SYSTEMS = [];
+var AUXILIARY = [];
+
+async function init() {
+  try {
+    var res = await fetch('/api/systems');
+    var data = await res.json();
+    SYSTEMS = data.core;
+    AUXILIARY = data.auxiliary;
+    renderGrid();
+    renderAux();
+  } catch(e) {
+    document.getElementById('grid').innerHTML = '<p style="color:var(--muted);text-align:center">加载失败，请刷新</p>';
+  }
+}
+
+function renderGrid() {
+  var html = '';
+  SYSTEMS.forEach(function(s) {
+    html += '<div class="card" onclick="openSystem(\''+s.id+'\')"><h3>'+s.name+'</h3><p>'+s.desc+'</p><span class="tag">'+s.inputs.length+' 参数</span></div>';
+  });
+  document.getElementById('grid').innerHTML = html;
+}
+
+function renderAux() {
+  var html = '';
+  var cats = {};
+  AUXILIARY.forEach(function(a) {
+    if (!cats[a.category]) cats[a.category] = [];
+    cats[a.category].push(a.name);
+  });
+  for (var cat in cats) {
+    html += '<div style="margin-bottom:16px"><strong style="color:var(--gold);font-size:.8em">'+cat+'</strong><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">';
+    cats[cat].forEach(function(n) { html += '<span class="aux-item">'+n+'</span>'; });
+    html += '</div></div>';
+  }
+  document.getElementById('auxGrid').innerHTML = html;
+  document.getElementById('auxSection').style.display = 'block';
+}
+
+function openSystem(id) {
+  var s = SYSTEMS.find(function(x) { return x.id === id; });
+  if (!s) return;
+  document.getElementById('modalTitle').textContent = s.name;
+  document.getElementById('result').innerHTML = '';
+  document.getElementById('result').classList.remove('active');
+  document.getElementById('error').classList.remove('active');
+  document.getElementById('loading').classList.remove('active');
+
+  var form = '<p style="color:var(--muted);margin-bottom:16px">'+s.desc+'</p>';
+  s.inputs.forEach(function(inp) {
+    var label = {birthYear:'出生年',birthMonth:'出生月',birthDay:'出生日',birthHour:'出生时(0-23)',birthMinute:'出生分',longitude:'经度',latitude:'纬度',gender:'性别(male/female)',coins:'铜钱(6次,逗号分隔,1正2反)',count:'牌数',upperTrigram:'上卦(1-8)',lowerTrigram:'下卦(1-8)',year:'年',month:'月',day:'日',hour:'时'}[inp] || inp;
+    form += '<div class="input-group"><label>'+label+'</label><input type="text" id="inp_'+inp+'" placeholder="'+label+'"></div>';
+  });
+  form += '<button type="button" class="btn" onclick="calculate(\''+id+'\')">开始占算</button>';
+  document.getElementById('modalForm').innerHTML = form;
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+async function calculate(id) {
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('result').classList.remove('active');
+  document.getElementById('error').classList.remove('active');
+  document.getElementById('loadingText').textContent = '命理计算中...';
+
+  var s = SYSTEMS.find(function(x) { return x.id === id; });
+  var body = {};
+  s.inputs.forEach(function(inp) {
+    var el = document.getElementById('inp_'+inp);
+    var v = el ? el.value : '';
+    if (inp === 'coins') v = v ? v.split(',').map(Number) : [1,1,1,1,1,1];
+    body[inp] = v || undefined;
+  });
+
+  try {
+    var res = await fetch('/api/'+id, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    var data = await res.json();
+    document.getElementById('loading').classList.remove('active');
+    if (data.error) {
+      document.getElementById('error').textContent = data.error + (data.hint ? ' — '+data.hint : '');
+      document.getElementById('error').classList.add('active');
+      return;
+    }
+    var text = data.result;
+    // If it's an object, format nicely
+    if (typeof text === 'object') {
+      text = JSON.stringify(text, null, 2);
+    }
+    // Show auxiliary refs
+    var auxInfo = '\n\n=== 辅助交叉推理 ===\n' + data.auxiliary_refs.map(function(a) { return '· '+a.name+' ('+a.category+')'; }).join('\n');
+    document.getElementById('result').textContent = '【'+data.systemName+'】\n\n'+ text.substring(0, 8000) + auxInfo;
+    document.getElementById('result').classList.add('active');
+  } catch(e) {
+    document.getElementById('loading').classList.remove('active');
+    document.getElementById('error').textContent = '网络错误: '+e.message;
+    document.getElementById('error').classList.add('active');
+  }
+}
+
+init();
+</script>
+</body>
+</html>
