@@ -1,6 +1,7 @@
 // 全球命理平台 — API handler
 // 11 核心计算引擎 + 200+ 辅助系统 AI 交叉推理
-const t = require('taibu-core');
+let t;
+const loadEngine = async () => { if (!t) t = await import('taibu-core'); return t; };
 
 const SYSTEMS = {
   bazi: { name: '八字命理', calc: t.calculateBazi, toJson: t.toBaziJson, toText: t.toBaziText,
@@ -72,6 +73,7 @@ ${JSON.stringify(data, null, 2)}
 }
 
 module.exports = async (req, res) => {
+  const t = await loadEngine();
   res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
