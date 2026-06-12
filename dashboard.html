@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>我的解读 — 命理堂 PRO</title>
+<style>
+:root{--bg:#0b0912;--card:rgba(22,18,38,.75);--gold:#d4a853;--goldL:#f0c96d;--text:#e8e2f0;--muted:#9488a8;--border:rgba(255,255,255,.08);--green:#34d399}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Inter","PingFang SC",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 20% 20%,rgba(52,211,153,.04),transparent 50%),radial-gradient(ellipse at 80% 60%,rgba(212,168,83,.03),transparent 50%);pointer-events:none;z-index:0}
+.container{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:32px 20px}
+.hero{text-align:center;padding:40px 0 32px}
+.hero h1{font-size:2em;font-weight:800}.hero h1 span{color:var(--green)}
+.hero p{color:var(--muted);font-size:.95em;margin-top:8px}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.badge{background:rgba(52,211,153,.1);border:1px solid var(--green);color:var(--green);padding:6px 14px;border-radius:20px;font-size:.8em}
+.section{margin:32px 0}
+.section h2{font-size:1.2em;color:var(--gold);margin-bottom:16px}
+.reading-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;backdrop-filter:blur(12px);cursor:pointer;transition:all .2s}
+.reading-card:hover{border-color:var(--gold)}
+.reading-card .meta{display:flex;justify-content:space-between;margin-bottom:8px}
+.reading-card .system{color:var(--gold);font-weight:600;font-size:.95em}
+.reading-card .date{color:var(--muted);font-size:.75em}
+.reading-card .preview{color:var(--muted);font-size:.82em;line-height:1.6;max-height:80px;overflow:hidden}
+.empty{text-align:center;padding:40px;color:var(--muted)}
+.btn{display:inline-block;padding:12px 28px;background:linear-gradient(135deg,var(--gold),#b8913a);border:none;border-radius:12px;color:#0b0912;font-weight:700;font-size:.95em;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(212,168,83,.2)}
+.btn-home{background:linear-gradient(135deg,var(--green),#10b981);color:#fff}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(5,4,14,.96);z-index:200;overflow-y:auto;backdrop-filter:blur(12px)}
+.modal.on{display:flex;align-items:flex-start;justify-content:center;padding:40px 16px}
+.mc{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:36px;max-width:700px;width:100%;margin-top:20px;backdrop-filter:blur(20px);box-shadow:0 24px 72px rgba(0,0,0,.5)}
+.mc h2{color:var(--gold);margin-bottom:16px}
+.res{background:rgba(10,8,25,.85);border:1px solid var(--border);border-radius:14px;padding:20px;white-space:pre-wrap;font-size:.85em;line-height:1.7;max-height:500px;overflow-y:auto}
+.close{float:right;background:none;border:none;color:var(--muted);font-size:1.4em;cursor:pointer}.close:hover{color:var(--text)}
+</style></head><body>
+<div class="container">
+<div class="hero">
+<h1>🔓 命理堂 <span>PRO</span></h1>
+<p>你的专属命理解读空间 · 所有解读永久保存</p>
+<div class="badge-row">
+<div class="badge">✅ 已解锁</div><div class="badge">📖 无限解读</div><div class="badge">🔍 25辅助体系</div><div class="badge">📊 完整报告</div>
+</div>
+<div style="margin-top:20px"><a href="/" class="btn btn-home">开始新解读 →</a></div>
+</div>
+<div class="section"><h2>📖 我的解读历史</h2><div id="history"></div></div>
+</div>
+<div class="modal" id="modal"><div class="mc">
+<button class="close" onclick="document.getElementById('modal').className='modal'">&times;</button>
+<h2 id="detailTitle"></h2><div class="res" id="detailContent"></div>
+</div></div>
+<script>
+if(localStorage.getItem('mingli_paid')!=='true'){location.href='/';}
+var history=JSON.parse(localStorage.getItem('mingli_history')||'[]');
+var el=document.getElementById('history');
+if(!history.length){el.innerHTML='<div class=empty><p style=font-size:2em>📭</p><p>还没有解读记录</p><p style=font-size:.8em;color:var(--muted);margin-top:8px>回到首页选择命理体系开始你的第一次深度解读</p></div>';}
+else{el.innerHTML=history.reverse().map(function(r,i){return '<div class=reading-card onclick=showDetail('+i+')><div class=meta><span class=system>'+r.system+'</span><span class=date>'+r.date+'</span></div><div class=preview>'+r.preview+'</div></div>';}).join('');}
+function showDetail(i){
+document.getElementById('modal').className='modal on';
+document.getElementById('detailTitle').textContent=history[i].system+' — '+history[i].date;
+document.getElementById('detailContent').textContent=history[i].full;
+}
+</script></body></html>

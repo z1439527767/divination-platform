@@ -25,7 +25,7 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backg
 <div class="loading"><div class="spinner"></div><span>验证中</span></div>
 <p id="msg">请稍候，正在确认你的支付状态</p>
 <div class="code" id="code" style="display:none"></div>
-<a id="btn" href="/" style="display:none">返回命理堂 — 开始完整解读</a>
+<a id="btn" href="/dashboard" style="display:none">进入你的专属解读空间 →</a>
 </div>
 <script>
 (async function(){
@@ -38,7 +38,7 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backg
     var d=await r.json();
     if(d.paid){
       document.getElementById('status').textContent='✅ 支付确认成功';
-      document.getElementById('msg').textContent='你的深度解读已解锁！现在可以回到命理堂，选择任意命理体系，进行完整的 AI 深度解读。你的支付凭证已保存。';
+      document.getElementById('msg').textContent='你的专属解读空间已开启！所有深度解读永久保存，随时查看。';
       document.querySelector('.loading').style.display='none';
       document.getElementById('btn').style.display='inline-block';
       // Store paid status locally
