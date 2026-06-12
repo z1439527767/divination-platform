@@ -131,71 +131,47 @@ ${auxSection}
 }
 
 module.exports = async (req, res) => {
-  const t = await loadEngine();
   res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const url = new URL(req.url, 'http://localhost');
   const path = url.pathname.replace('/api/', '');
 
-  // List all systems
   if (path === 'systems' || path === '') {
-    const full = (req.body && req.body.full === true);
-      if (!full) {
-        return res.json({
+    return res.json({
       core: Object.entries(SYSTEMS).map(([k, v]) => ({ id: k, name: v.name, desc: v.desc, inputs: v.inputs })),
       auxiliary: getAuxiliaryList(),
       total_auxiliary: getAuxiliaryList().length
     });
   }
 
-  // Run a divination
   if (SYSTEMS[path]) {
     try {
+      const t = await loadEngine();
       const sys = SYSTEMS[path];
       const input = req.body || {};
-
-      // Fill defaults
       const now = new Date();
       const params = {
-        birthYear: input.birthYear || 1990,
-        birthMonth: input.birthMonth || 1,
-        birthDay: input.birthDay || 1,
-        birthHour: input.birthHour || 12,
-        birthMinute: input.birthMinute || 0,
-        longitude: input.longitude || 121.5,
-        latitude: input.latitude || 31.2,
-        gender: input.gender || 'male',
-        year: input.year || now.getFullYear(),
-        month: input.month || now.getMonth() + 1,
-        day: input.day || now.getDate(),
-        hour: input.hour || now.getHours(),
-        coins: input.coins || [1,1,1,1,1,1],
-        count: input.count || 3,
-        upperTrigram: input.upperTrigram || 1,
-        lowerTrigram: input.lowerTrigram || 1,
+        birthYear: input.birthYear || 1990, birthMonth: input.birthMonth || 1,
+        birthDay: input.birthDay || 1, birthHour: input.birthHour || 12,
+        birthMinute: input.birthMinute || 0, longitude: input.longitude || 121.5,
+        latitude: input.latitude || 31.2, gender: input.gender || 'male',
+        year: input.year || now.getFullYear(), month: input.month || now.getMonth() + 1,
+        day: input.day || now.getDate(), hour: input.hour || now.getHours(),
+        coins: input.coins || [1,1,1,1,1,1], count: input.count || 3,
+        upperTrigram: input.upperTrigram || 1, lowerTrigram: input.lowerTrigram || 1,
       };
-
       const [calcFn, toJsonFn] = sys.fn;
       const result = t[calcFn](params);
       const json = t[toJsonFn](result);
-
-      // Select relevant auxiliary systems for deep cross-referencing
       const auxRefs = selectAuxiliaryRefs(path);
-
-      const full = (req.body && req.body.full === true);
-      if (!full) {
-        return res.json({
-        system: path,
-        systemName: sys.name,
-        result: json,
-        auxiliary_refs: auxRefs,
-        prompt: buildPrompt(path, json, auxRefs),
-        auxiliary_count: auxRefs.length,
+      return res.json({
+        system: path, systemName: sys.name, result: json, auxiliary_refs: auxRefs,
+        prompt: buildPrompt(path, json, auxRefs), auxiliary_count: auxRefs.length,
         timestamp: new Date().toISOString()
       });
     } catch (e) {
-      return res.status(400).json({ error: e.message, hint: '参数格式不对，检查输入' });
+      return res.status(400).json({ error: e.message, hint: '参数格式错误' });
     }
   }
 
