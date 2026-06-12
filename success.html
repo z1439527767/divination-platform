@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>支付成功 — 命理堂</title>
+<style>
+:root{--bg:#0b0912;--card:rgba(22,18,38,.75);--gold:#d4a853;--goldL:#f0c96d;--text:#e8e2f0;--muted:#9488a8;--border:rgba(255,255,255,.08);--green:#34d399}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Inter","PingFang SC",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 20% 20%,rgba(212,168,83,.06),transparent 50%),radial-gradient(ellipse at 80% 60%,rgba(167,139,250,.04),transparent 50%);pointer-events:none;z-index:0}
+.card{position:relative;z-index:1;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:52px 40px;max-width:520px;width:90%;text-align:center;backdrop-filter:blur(20px);box-shadow:0 24px 72px rgba(0,0,0,.4)}
+.card .icon{font-size:4em;margin-bottom:20px}
+.card h1{font-size:1.8em;font-weight:700;margin-bottom:12px;color:var(--gold)}
+.card p{color:var(--muted);font-size:1em;line-height:1.7;margin-bottom:8px}
+.card .box{background:rgba(10,8,25,.8);border:1px solid var(--border);border-radius:14px;padding:20px;margin:24px 0;text-align:left;line-height:2}
+.card .box strong{color:var(--goldL)}
+.card a{display:inline-block;padding:15px 40px;background:linear-gradient(135deg,var(--gold),#b8913a);border:none;border-radius:14px;color:#0b0912;font-weight:700;font-size:1.05em;text-decoration:none;transition:all .2s;box-shadow:0 4px 20px rgba(212,168,83,.15)}
+.card a:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(212,168,83,.25)}
+.card .note{font-size:.78em;color:rgba(255,255,255,.25);margin-top:20px}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="icon">✅</div>
+<h1>支付成功！</h1>
+<p>你已经解锁了命理堂 AI 深度解读</p>
+<div class="box">
+<p><strong>下一步：</strong></p>
+<p>1. 回到命理堂首页</p>
+<p>2. 选择任意命理体系（八字/紫微/占星/塔罗...）</p>
+<p>3. 输入你的生辰信息</p>
+<p>4. AI 将为你生成完整深度报告</p>
+<p style="font-size:.85em;color:var(--muted);margin-top:8px">💡 提示：可以多次使用。每份报告都是基于你输入的信息全新生成的。</p>
+</div>
+<a href="/">返回命理堂 — 开始解读</a>
+<p class="note">如有任何问题，请查看支付确认邮件中的联系方式</p>
+</div>
+</body>
+</html>
