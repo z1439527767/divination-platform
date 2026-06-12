@@ -137,6 +137,21 @@ module.exports = async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   const path = url.pathname.replace('/api/', '');
 
+  // Payment verification
+  if (path.startsWith('verify')) {
+    const sessionId = url.searchParams.get('session_id');
+    if (!sessionId) return res.json({ paid: false, error: 'missing session_id' });
+    try {
+      const r = await fetch('https://api.stripe.com/v1/checkout/sessions/' + sessionId, {
+        headers: { 'Authorization': 'Bearer ' + process.env.STRIPE_SECRET_KEY }
+      });
+      const session = await r.json();
+      return res.json({ paid: session.payment_status === 'paid', amount: session.amount_total, email: session.customer_email });
+    } catch (e) {
+      return res.json({ paid: false, error: e.message });
+    }
+  }
+
   if (path === 'systems' || path === '') {
     return res.json({
       core: Object.entries(SYSTEMS).map(([k, v]) => ({ id: k, name: v.name, desc: v.desc, inputs: v.inputs })),
